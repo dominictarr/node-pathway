@@ -7,5 +7,5 @@ var xs = [
     { x : { y : { z : 333 } } },
     { X : { y : { z : 222 } } }
 ];
-var ys = pathway(xs, [ /./, /x/i, 'y', 'z' ]);
+var ys = pathway(xs, [ true, /x/i, 'y', 'z' ]);
 console.dir(ys);
