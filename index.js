@@ -13,10 +13,8 @@ module.exports = function pathway (obj, path) {
         }
         else {
             return concatMap(nodes, function (node, ix) {
-                if (ip === nodes.length - 1) return node[p];
                 if (!node[p]) return [];
-                if (typeof node[p] !== 'object') return [];
-                return node[p];
+                return [ node[p] ];
             })
         }
     }, [ obj ]);
