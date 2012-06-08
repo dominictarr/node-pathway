@@ -5,6 +5,9 @@ module.exports = function pathway (obj, path) {
         if (typeof p === 'function') {
             return withFilter(nodes, p)
         }
+        else if (typeof p === 'boolean') {
+            return withFilter(nodes, function () { return p });
+        }
         else if (isRegExp(p)) {
             return withFilter(nodes, function (key) { return p.test(key) })
         }
