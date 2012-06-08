@@ -7,16 +7,15 @@ var xs = [
     [],
     [ 'g', 5, 'h' ],
 ];
-function True () { return true }
 function even (n) { return n % 2 === 0 }
 function odd (n) { return n % 2 === 1 }
 function doubleOdd (key, value) { return odd(key) && odd(value) }
 
-var odds = pathway(xs, [ True, odd ]);
+var odds = pathway(xs, [ true, odd ]);
 console.dir(odds); // [ 1, 2, 3, 4, 5 ]
 
-var evens = pathway(xs, [ True, even ]);
+var evens = pathway(xs, [ true, even ]);
 console.dir(evens); // [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' ]
 
-var doubleOdds = pathway(xs, [ True, doubleOdd ]);
+var doubleOdds = pathway(xs, [ true, doubleOdd ]);
 console.dir(doubleOdds); // [ 1, 3, 5 ]
