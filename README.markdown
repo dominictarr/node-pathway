@@ -3,6 +3,8 @@ pathway
 
 Trace key-paths through nested objects.
 
+[![build status](https://secure.travis-ci.org/substack/node-pathway.png)](http://travis-ci.org/substack/node-pathway)
+
 example
 =======
 
