@@ -27,7 +27,7 @@ function withFilter (nodes, fn) {
         if (typeof node !== 'object') return [];
         
         return Object.keys(node)
-            .filter(fn)
+            .filter(function (key) { return fn(key, node[key]) })
             .map(function (key) { return node[key] })
         ;
     });
