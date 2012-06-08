@@ -1,7 +1,7 @@
 pathway
 =======
 
-Trace key-paths through nested objects.
+Follow key-paths through nested objects.
 
 [![build status](https://secure.travis-ci.org/substack/node-pathway.png)](http://travis-ci.org/substack/node-pathway)
 
@@ -41,10 +41,17 @@ pathway(obj, path)
 Return an array of all the matching paths through the nested object `obj` that
 match the key path route `path`.
 
-Key path routes may contain string or regexp elements. Keys along the element
-path go deeper into `obj`. If there are multiple matching results from a
-regexp key element, both will be traced forward to the result unless a
-subsequent value doesn't match.
+Key paths determine how to proceed deeper into the object for each element.
+Key paths may contain these kinds of elements:
+
+* string, number - used as raw keys
+* RegExp - match keys
+* boolean - match all or no keys
+* function - match keys with `f(key, value)`, return truthiness
+
+Some types may select multiple matching results at a given node, in which case
+all the matching nodes at that level will be followed forward into the result
+until a later condition isn't satisfied. 
 
 This behavior is heavily inspired by how
 [JSONStream](https://github.com/dominictarr/JSONStream)'s `.parse()` function
