@@ -10,16 +10,21 @@ module.exports = function pathway (root, keys) {
         
         function check (k, v) {
             if (ktype === 'boolean') {
-                if (key) walk(v, index + 1);
+                if (key) next();
             }
             else if (ktype === 'function') {
-                if (key(v, k)) walk(v, index + 1);
+                if (key(k, v)) next();
             }
             else if (isRegExp(key)) {
-                if (key.test(k)) walk(v, index + 1);
+                if (key.test(k)) next();
             }
             else {
-                if (key === k) walk(v, index + 1);
+                if (key === k) next();
+            }
+            
+            function next () {
+                if (last) matches.push(v)
+                else walk(v, index + 1);
             }
         }
         
