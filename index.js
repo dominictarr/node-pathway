@@ -11,6 +11,11 @@ module.exports = function pathway (obj, path) {
         else if (isRegExp(p)) {
             return withFilter(nodes, function (key) { return p.test(key) })
         }
+        else if (Array.isArray(p)) {
+            return withFilter(nodes, function (key) {
+                return p.indexOf(key) >= 0;
+            });
+        }
         else {
             return concatMap(nodes, function (node, ix) {
                 if (!node[p]) return [];
