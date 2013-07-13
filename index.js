@@ -13,7 +13,13 @@ module.exports = function pathway (obj, path) {
         }
         else if (Array.isArray(p)) {
             return withFilter(nodes, function (key) {
-                return p.indexOf(key) >= 0;
+                for (var i = 0; i < p.length; i++) {
+                    if (isRegExp(p[i]) && p[i].test(key)) {
+                        return true;
+                    }
+                    else if (p[i] === key) return true
+                }
+                return false;
             });
         }
         else {
@@ -30,7 +36,7 @@ function withFilter (nodes, fn) {
         if (typeof node !== 'object') return [];
         
         return Object.keys(node)
-            .filter(function (key) { return fn(key, node[key]) })
+            .filter(function (key, ix) { return fn(key, node[key]) })
             .map(function (key) { return node[key] })
         ;
     });
