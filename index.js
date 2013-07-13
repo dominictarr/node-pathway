@@ -45,7 +45,7 @@ module.exports = function pathway (root, keys) {
                 check(i, v);
             }
         }
-        else if (ntype === 'object') {
+        else if (node && ntype === 'object') {
             var keys_ = Object.keys(node);
             for (var i = 0, l = keys_.length; i < l; i++) {
                 var k = keys_[i];
