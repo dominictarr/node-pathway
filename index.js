@@ -1,45 +1,70 @@
-var concatMap = require('concat-map');
-
-module.exports = function pathway (obj, path) {
-    return path.reduce(function (nodes, p, ip) {
-        if (typeof p === 'function') {
-            return withFilter(nodes, p)
-        }
-        else if (typeof p === 'boolean') {
-            return withFilter(nodes, function () { return p });
-        }
-        else if (isRegExp(p)) {
-            return withFilter(nodes, function (key) { return p.test(key) })
-        }
-        else if (Array.isArray(p)) {
-            return withFilter(nodes, function (key) {
-                for (var i = 0; i < p.length; i++) {
-                    if (isRegExp(p[i]) && p[i].test(key)) {
-                        return true;
-                    }
-                    else if (p[i] === key) return true
-                }
-                return false;
-            });
-        }
-        else {
-            return concatMap(nodes, function (node, ix) {
-                if (!node[p]) return [];
-                return [ node[p] ];
-            })
-        }
-    }, [ obj ]);
-};
-
-function withFilter (nodes, fn) {
-    return concatMap(nodes, function (node) {
-        if (typeof node !== 'object') return [];
+module.exports = function pathway (root, keys) {
+    var length = keys.length;
+    var matches = [];
+    
+    (function walk (node, index, key) {
+        var last = index === length - 1;
+        if (key === undefined) key = keys[index];
+        var ktype = typeof key;
+        var ntype = typeof node;
         
-        return Object.keys(node)
-            .filter(function (key, ix) { return fn(key, node[key]) })
-            .map(function (key) { return node[key] })
-        ;
-    });
+        function check (k, v) {
+            if (ktype === 'boolean') {
+                if (key) walk(v, index + 1);
+            }
+            else if (ktype === 'function') {
+                if (key(v, k)) walk(v, index + 1);
+            }
+            else if (isRegExp(key)) {
+                if (key.test(k)) walk(v, index + 1);
+            }
+            else {
+                if (key === k) walk(v, index + 1);
+            }
+        }
+        
+        if (Array.isArray(key)) {
+            for (var i = 0, l = key.length; i < l; i++) {
+                walk(node, index, key[i]);
+            }
+        }
+        else if (ntype === 'object'
+        && (ktype === 'string' || ktype === 'number')) {
+            if (!(key in node)) {}
+            else if (last) matches.push(node[key])
+            else walk(node[key], index + 1)
+        }
+        else if (Array.isArray(node)) {
+            for (var i = 0, l = node.length; i < l; i++) {
+                var v = node[i];
+                check(i, v);
+            }
+        }
+        else if (ntype === 'object') {
+            var keys_ = Object.keys(node);
+            for (var i = 0, l = keys_.length; i < l; i++) {
+                var k = keys_[i];
+                var v = node[k];
+                check(k, v);
+            }
+        }
+        else if (last) {
+            if (ktype === 'boolean') {
+                if (key) matches.push(node);
+            }
+            else if (ktype === 'function') {
+                if (key(node)) matches.push(node);
+            }
+            else if (isRegExp(key)) {
+                if (key.test(node)) matches.push(node);
+            }
+            else if (key === node) {
+                matches.push(node);
+            }
+        }
+    })(root, 0);
+    
+    return matches;
 }
 
 function isRegExp (x) {
