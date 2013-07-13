@@ -48,6 +48,7 @@ Key paths may contain these kinds of elements:
 * RegExp - match keys
 * boolean - match all or no keys
 * function - match keys with `f(key, value)`, return truthiness
+* array - match any of these strings or regexes
 
 Some types may select multiple matching results at a given node, in which case
 all the matching nodes at that level will be followed forward into the result
