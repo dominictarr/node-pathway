@@ -7,22 +7,28 @@ module.exports = function pathway (root, keys) {
         if (key === undefined) key = keys[index];
         var ktype = typeof key;
         var ntype = typeof node;
-        
-        function check (k, v) {
-            if (ktype === 'boolean') {
-                if (key) next();
+
+        function test(key, k, v) {
+            if ('boolean' === typeof key) {
+                return key;
             }
             else if (ktype === 'function') {
-                if (key(k, v)) next();
+                return key(k, v)
             }
             else if (isRegExp(key)) {
-                if (key.test(k)) next();
+                return key.test(k);
             }
             else {
-                if (key === k) next();
+                return key === k;
             }
-            
-            function next () {
+        }
+        
+        function check (k, v, key) {
+            if(key && key.key) {
+                if(test(key.key, k, v))
+                    matches.push(k)
+            }
+            else if (test(key, k, v)) {
                 if (last) matches.push(v)
                 else walk(v, index + 1);
             }
@@ -32,7 +38,7 @@ module.exports = function pathway (root, keys) {
             for (var i = 0, l = key.length; i < l; i++) {
                 walk(node, index, key[i]);
             }
-        }
+          }
         else if (ntype === 'object'
         && (ktype === 'string' || ktype === 'number')) {
             if (!(key in node)) {}
@@ -42,7 +48,7 @@ module.exports = function pathway (root, keys) {
         else if (Array.isArray(node)) {
             for (var i = 0, l = node.length; i < l; i++) {
                 var v = node[i];
-                check(i, v);
+                check(i, v, key);
             }
         }
         else if (node && ntype === 'object') {
@@ -50,7 +56,7 @@ module.exports = function pathway (root, keys) {
             for (var i = 0, l = keys_.length; i < l; i++) {
                 var k = keys_[i];
                 var v = node[k];
-                check(k, v);
+                check(k, v, key, ktype);
             }
         }
         else if (last) {
@@ -73,5 +79,5 @@ module.exports = function pathway (root, keys) {
 }
 
 function isRegExp (x) {
-    return Object.prototype.toString.call(x) === '[object RegExp]';
+    return x && 'function' === typeof x.test
 }
